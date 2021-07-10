@@ -1,0 +1,45 @@
+.container{
+    width: 80%;
+    margin: auto;
+}
+
+.navbar{
+    height: auto;
+    overflow: hidden;
+    background-color: #435d7d;
+    color: #fff;
+    margin-bottom: 15PX;
+}
+
+.logo{
+    font-size: 25px;
+    width:60%;
+    float:right;
+    display:block;
+    margin: 10px 0;
+    color:#fff;
+    text-decoration: none;
+}
+
+ul{
+    display:flex;
+    font-size: 15px;
+    width:40%;
+    float:right;
+    margin: 10px 0;
+    float:right;
+    padding:0;
+    text-align: right;
+}
+
+ul a{
+    text-decoration: none !important;
+    color:#fff !important;
+    margin:0 15px !important;
+    /* border-bottom: azure solid; */
+    font-weight: bold;
+
+}
+.active{
+    border-bottom: azure solid;
+}
