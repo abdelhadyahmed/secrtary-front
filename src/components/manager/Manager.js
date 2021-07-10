@@ -8,9 +8,11 @@ export default function Manager(){
     const [visitors, setVisitors] = useState([]);
     const { data, error } = useSWR('http://127.0.0.1:8000/api/manager', (url) => axios(url).then(res => res.data))
     useEffect(()=>{
-        setVisitors(data || [])
+        if(data){
+            setVisitors(data || [])
+        }
         // console.log(visitors)
-    })
+    },[data])
     
     return (
         <div className="container" >
@@ -41,8 +43,8 @@ export default function Manager(){
                                         <td>{visitor.reason}</td>
                                         <td>{visitor.notes}</td>
                                         <td colSpan="2">
-                                            <a  className="edit"><i className="fa fa-check"></i></a>
-                                            <a  className="delete" ><i className="fa fa-times"></i></a>
+                                            {/* <a  className="edit"><i className="fa fa-check"></i></a>
+                                            <a  className="delete" ><i className="fa fa-times"></i></a> */}
                                         </td>
                                     </tr>
                                 )
