@@ -11,8 +11,19 @@ export default function Manager(){
         if(data){
             setVisitors(data || [])
         }
-        // console.log(visitors)
     },[data])
+
+    const deleteVisitor = (id, bool)=>{
+        if(!bool){
+            alert('رفض')
+        }else{
+            axios.post('http://127.0.0.1:8000/api/deleteVisitor/'+id)
+            let updatedVisitors = visitors.filter(visitor =>{
+                return visitor.id !== id;
+            });
+            setVisitors(updatedVisitors)
+        }
+    }
     
     return (
         <div className="container" >
@@ -43,6 +54,8 @@ export default function Manager(){
                                         <td>{visitor.reason}</td>
                                         <td>{visitor.notes}</td>
                                         <td colSpan="2">
+                                            <button onClick={()=>deleteVisitor(visitor.id, 1)}>سماح</button>
+                                            <button onClick={()=>deleteVisitor(visitor.id, 0)}>رفض</button>
                                             {/* <a  className="edit"><i className="fa fa-check"></i></a>
                                             <a  className="delete" ><i className="fa fa-times"></i></a> */}
                                         </td>
