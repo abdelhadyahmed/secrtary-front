@@ -102,7 +102,7 @@ export default function Secrtary(){
                                 return(
                                     <tr key={visitor.id}>
                                         <td colSpan="2">{visitor.name}</td>
-                                        <td colSpan="2">{visitor.command ? "سماح": "رفض"}</td>
+                                        <td colSpan="2">{visitor.command === 1? "سماح" : visitor.command === 2 ? "إنتظار" : "رفض" }</td>
                                         <td>
                                             <button onClick={()=>deleteVisitor(visitor.id)}>مسح الطلب</button>
                                         </td>

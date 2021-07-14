@@ -7,6 +7,7 @@ import './Manager.css'
 
 export default function Manager(){
     const [visitors, setVisitors] = useState([]);
+    const [boolCommand, setBoolCommand] =useState(0);
     // const [waitTime, setWaitTime] = useState(0);
     const { data, error } = useSWR('http://127.0.0.1:8000/api/manager', (url) => axios(url).then(res => res.data))
     useEffect(()=>{
@@ -16,7 +17,8 @@ export default function Manager(){
     },[data])
 
     const deleteVisitor = (currentVisitor, bool)=>{
-        if(!bool){
+        if(bool === 0){
+            setBoolCommand(bool + currentVisitor.id)
             axios.post('http://127.0.0.1:8000/api/deleteVisitor/'+currentVisitor.id)
             let updatedVisitors = visitors.filter(visitor =>{
                 return visitor.id !== currentVisitor.id;
@@ -26,12 +28,19 @@ export default function Manager(){
                 name: currentVisitor.name,
                 command: bool
             })
-        }else{
+        }else if(bool === 1){
+            setBoolCommand(bool + currentVisitor.id)
             axios.post('http://127.0.0.1:8000/api/deleteVisitor/'+currentVisitor.id)
             let updatedVisitors = visitors.filter(visitor =>{
                 return visitor.id !== currentVisitor.id;
             });
             setVisitors(updatedVisitors)
+            axios.post('http://127.0.0.1:8000/api/command_to_secrtary',{
+                name: currentVisitor.name,
+                command: bool
+            })
+        }else if (bool === 2){
+            setBoolCommand(bool + currentVisitor.id)
             axios.post('http://127.0.0.1:8000/api/command_to_secrtary',{
                 name: currentVisitor.name,
                 command: bool
@@ -101,6 +110,8 @@ export default function Manager(){
                                         <td colSpan="2">
                                             <button onClick={()=>deleteVisitor(visitor,1)}>سماح</button>
                                             <button onClick={()=>deleteVisitor(visitor, 0)}>رفض</button>
+                                            <button onClick={()=>deleteVisitor(visitor, 2)}>انتظار</button>
+                                            {boolCommand === 2 + visitor.id ? <p>هذه الزيارة في حالة انتظار</p> : null}
                                             {/* <NumericInput onChange={handleWaitTime} value={waitTime} step={1} min={0} max={60} mobile={true} style ={style}/> */}
                                         </td>
                                     </tr>
