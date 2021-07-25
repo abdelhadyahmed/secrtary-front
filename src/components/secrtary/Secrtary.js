@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import useSWR from 'swr';
 import './Secrtary.css'
+import {IP} from '../../Config'
 
 export default function Secrtary(){
     const [state, setState] = useState({
@@ -10,7 +11,7 @@ export default function Secrtary(){
         notes:''
     });
     const [visitorsCommand, setVisitorsCommand] = useState([]);
-    const { data, error } = useSWR('http://127.0.0.1:8000/api/getVisitorsCommand', (url) => axios(url).then(res => res.data))
+    const { data, error } = useSWR('http://'+IP+'/api/getVisitorsCommand', (url) => axios(url).then(res => res.data), { refreshInterval: 1 })
     useEffect(()=>{
         if(data){
             setVisitorsCommand(data || [])
@@ -21,7 +22,7 @@ export default function Secrtary(){
         if (e.target.name.value === '' || e.target.reason.value ===''){
             return false
         }else{
-            axios.post("http://127.0.0.1:8000/api/secretary",{
+            axios.post('http://'+IP+'/api/secretary',{
                 name: state.name,
                 reason: state.reason,
                 notes: state.notes
@@ -40,7 +41,7 @@ export default function Secrtary(){
         })
     }
     const deleteVisitor = (id)=>{
-        axios.post('http://127.0.0.1:8000/api/deleteVisitorCommand/'+id)
+        axios.post('http://'+IP+'/api/deleteVisitorCommand/'+id)
             let updatedVisitors = visitorsCommand.filter(visitor =>{
                 return visitor.id !== id;
             });
