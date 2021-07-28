@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect,useMemo } from 'react'
+import testAudio from '../../sound/test.wav'
+// import useSound from 'use-sound';
+// import boopSfx from '../../sounds/boop.mp3';
 import axios from 'axios'
 import useSWR from 'swr'
 import './Manager.css'
@@ -7,6 +10,7 @@ import {IP} from '../../Config'
 let alertVisitors = []
 
 export default function Manager(){
+    // const [playAudio, setPlayAudio] = useState(false)
     const [visitors, setVisitors] = useState([]);
     const [boolCommand, setBoolCommand] =useState(0);
     const { data, error } = useSWR('http://'+IP+'/api/manager', (url) => axios(url).then(res => res.data), { refreshInterval: 1 });
@@ -15,13 +19,26 @@ export default function Manager(){
             setVisitors(data || [])
         }
     },[data])
+
     
+    const audio = useMemo(()=>{
+        return(new Audio(testAudio))
+    },[])
+
+    // useEffect(() => {
+    //     if (!audio) return;
+    //     playAudio ? audio.play() : audio.pause();
+    //   }, [playAudio, audio]);
+    // const audio = new Audio(testAudio)
+
     useEffect(()=>{
         if(alertVisitors.length < visitors.length  ){
-            alert(visitors[visitors.length -1]?.name)
+            // alert(visitors[visitors.length -1]?.name)
+            // setPlayAudio(true)
+            audio.play()
         }
         alertVisitors = visitors
-    },[visitors])
+    },[visitors,audio])
 
     const deleteVisitor = (currentVisitor, bool)=>{
         if(bool === 0){

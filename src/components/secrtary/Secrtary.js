@@ -1,8 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect,useMemo } from 'react';
 import axios from 'axios';
+import testAudio from '../../sound/test.wav'
+
 import useSWR from 'swr';
 import './Secrtary.css'
 import {IP} from '../../Config'
+
+let alertVisitors = []
 
 export default function Secrtary(){
     const [state, setState] = useState({
@@ -47,6 +51,19 @@ export default function Secrtary(){
             });
             setVisitorsCommand(updatedVisitors)
     }
+    const audio = useMemo(()=>{
+        return(new Audio(testAudio))
+    },[])
+    // const audio = new Audio(testAudio)
+
+    useEffect(()=>{
+        if(alertVisitors.length < visitorsCommand.length  ){
+            // alert(visitors[visitors.length -1]?.name)
+            // setPlayAudio(true)
+            audio.play()
+        }
+        alertVisitors = visitorsCommand
+    },[visitorsCommand,audio])
 
     return (
         <div className="container">
