@@ -1,20 +1,27 @@
 import React, { useState, useEffect } from 'react'
-// import NumericInput from 'react-numeric-input'
 import axios from 'axios'
 import useSWR from 'swr'
 import './Manager.css'
 import {IP} from '../../Config'
 
+let alertVisitors = []
+
 export default function Manager(){
     const [visitors, setVisitors] = useState([]);
     const [boolCommand, setBoolCommand] =useState(0);
-    // const [waitTime, setWaitTime] = useState(0);
-    const { data, error } = useSWR('http://'+IP+'/api/manager', (url) => axios(url).then(res => res.data), { refreshInterval: 1 })
+    const { data, error } = useSWR('http://'+IP+'/api/manager', (url) => axios(url).then(res => res.data), { refreshInterval: 1 });
     useEffect(()=>{
         if(data){
             setVisitors(data || [])
         }
     },[data])
+    
+    useEffect(()=>{
+        if(alertVisitors.length < visitors.length  ){
+            alert(visitors[visitors.length -1]?.name)
+        }
+        alertVisitors = visitors
+    },[visitors])
 
     const deleteVisitor = (currentVisitor, bool)=>{
         if(bool === 0){
@@ -47,38 +54,7 @@ export default function Manager(){
             })
         }
     }
-    // const handleWaitTime = (e)=>{
-    //     setWaitTime(e)
-    // }
-    // const style ={
-    //     wrap: {
-    //         background: '#E2E2E2',
-    //         boxShadow: '0 0 1px 1px #fff inset, 1px 1px 5px -1px #000',
-    //         padding: '2px 2.26ex 2px 2px',
-    //         borderRadius: '6px 3px 3px 6px',
-    //         fontSize: 15
-    //     },
-    //     input: {
-    //         borderRadius: '4px 2px 2px 4px',
-    //         color: 'black',
-    //         padding: '0.1ex 1ex',
-    //         border: '1px solid #ccc',
-    //         marginRight: 4,
-    //         display: 'block',
-    //         fontWeight: 100,
-    //         textShadow: '1px 1px 1px rgba(0, 0, 0, 0.1)'
-    //     },
-    //     'input:focus' : {
-    //         border: '1px inset #69C',
-    //         outline: 'none'
-    //     },
-    //     arrowUp: {
-    //         borderBottomColor: '#435d7d'
-    //     },
-    //     arrowDown: {
-    //         borderTopColor: '#435d7d'
-    //     }
-    // }
+    
     return (
         
         <div className="container" >
@@ -113,7 +89,6 @@ export default function Manager(){
                                             <button onClick={()=>deleteVisitor(visitor, 0)}>رفض</button>
                                             <button onClick={()=>deleteVisitor(visitor, 2)}>انتظار</button>
                                             {boolCommand === 2 + visitor.id ? <p>هذه الزيارة في حالة انتظار</p> : null}
-                                            {/* <NumericInput value={0} step={1} min={0} max={60} mobile={true} style ={style}/> */}
                                         </td>
                                     </tr>
                                 )
