@@ -40,8 +40,8 @@ export default function VisitorsTable(){
                                 return(
                                     <tr key={visitor.id}>
                                         <td colSpan="2">{visitor.name}</td>
+                                        <td>{visitor.job}</td>
                                         <td>{visitor.reason}</td>
-                                        <td>{visitor.notes}</td>
                                         <td>{visitor.created_at}</td>
                                     </tr>
                                 )

@@ -1,7 +1,7 @@
 import { useState, useEffect,useMemo } from 'react';
+import Nav from '../nav/Nav'
 import axios from 'axios';
 import testAudio from '../../sound/iphone-sms.mp3'
-
 import useSWR from 'swr';
 import './Secrtary.css'
 import {IP} from '../../Config'
@@ -12,8 +12,8 @@ let alertVisitors = []
 export default function Secrtary(){
     const [state, setState] = useState({
         name:'',
+        job:'',
         reason:'',
-        notes:''
     });
     const [visitorsCommand, setVisitorsCommand] = useState([]);
     const { data, error } = useSWR('http://'+IP+'/api/getVisitorsCommand', (url) => axios(url).then(res => res.data), { refreshInterval: 1 })
@@ -26,18 +26,18 @@ export default function Secrtary(){
 
      const handleSubmit = (e)=>{
         e.preventDefault();
-        if (e.target.name.value === '' || e.target.reason.value ===''){
+        if (e.target.name.value === '' || e.target.job.value ===''){
             return false
         }else{
             axios.post('http://'+IP+'/api/secretary',{
                 name: state.name,
+                job: state.job,
                 reason: state.reason,
-                notes: state.notes
             });
             setState({
                 name: "",
+                job: "",
                 reason: "",
-                notes: ""
             });
         }
     }
@@ -46,6 +46,10 @@ export default function Secrtary(){
             ...state,
             [e.target.name] : e.target.value
         })
+    }
+    const deleteAllCommands = ()=>{
+        axios.post('http://'+IP+'/api/deleteAllVisitorsCommand')
+            setVisitorsCommand([])
     }
     const deleteVisitor = (id)=>{
         axios.post('http://'+IP+'/api/deleteVisitorCommand/'+id)
@@ -88,75 +92,81 @@ export default function Secrtary(){
     }
 
     return (
-        <div className="container">
-            <div className="card" style={{marginBottom:"20px"}}>
-                <div className="card-header" >
-                    <h3>معلومات عن الزائر</h3>
+        <>
+            <Nav title='سكرتارية القائد'/>
+            <div className="container">
+                <div className="card" style={{marginBottom:"20px"}}>
+                    <div className="card-header" >
+                        <h3>معلومات عن الزائر</h3>
+                    </div>
+                    <div className="card-body">
+                        <form onSubmit={handleSubmit}>
+                            <div className="row mb-4">
+                                <div className="col">
+                                <div className="form-outline">
+                                    <label className="form-label" htmlFor="form3Example1">إسم الزائر</label>
+                                    <input required type="text" name="name" className="form-control" onChange={handleChange} value={state.name} />
+                                </div>
+                                </div>
+                                <div className="col">
+                                <div className="form-outline">
+                                    <label className="form-label" htmlFor="form3Example2">الوظيفة</label>
+                                    <input required type="text" name="job"  className="form-control"  onChange={handleChange} value={state.job} />
+                                </div>
+                                </div>
+                            </div>
+
+
+                            <div className="form-outline mb-4">
+                                <label className="form-label" htmlFor="form3Example3">سبب الزيارة</label>
+                                <input type="text" name="reason"  className="form-control"  onChange={handleChange} value={state.reason} />
+                            </div>
+
+
+                            <div className="text-center">
+                                <button type="submit" className="btn mb-4 btncolor" >إرسال إلى القائد</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-                <div className="card-body">
-                    <form onSubmit={handleSubmit}>
-                        <div className="row mb-4">
-                            <div className="col">
-                            <div className="form-outline">
-                                <label className="form-label" htmlFor="form3Example1">إسم الزائر</label>
-                                <input required type="text" name="name" className="form-control" onChange={handleChange} value={state.name} />
-                            </div>
-                            </div>
-                            <div className="col">
-                            <div className="form-outline">
-                                <label className="form-label" htmlFor="form3Example2">الوظيفة</label>
-                                <input required type="text" name="reason"  className="form-control"  onChange={handleChange} value={state.reason} />
-                            </div>
-                            </div>
-                        </div>
-
-
-                        <div className="form-outline mb-4">
-                            <label className="form-label" htmlFor="form3Example3">سبب الزيارة</label>
-                            <input type="text" name="notes"  className="form-control"  onChange={handleChange} value={state.notes} />
-                        </div>
-
-
-                        <div className="text-center">
-                            <button type="submit" className="btn mb-4 btncolor" >إرسال إلى القائد</button>
-                        </div>
-                    </form>
+                <div className="card">
+                    <div className="card-header commands-header d-flex justify-content-between">
+                        <h3>أوامر الدخول</h3>
+                        <button style={buttonStyle}
+                            onClick={()=>{deleteAllCommands()}}
+                        >مسح الكل</button>    
+                    </div>
+                    <div className="card-body">
+                        <table className="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                                    <th colSpan="2">إسم الزائر</th>
+                                    <th colSpan="2">الأمر</th>
+                                    <th colSpan="2">مسح طلب الدخول</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {error ? <tr>حدث خطأ في استرجاع البيانات</tr> : null}
+                                {visitorsCommand.map(visitor =>{
+                                    return(
+                                        <tr key={visitor.id}>
+                                            <td colSpan="2">{visitor.name}</td>
+                                            <td colSpan="2"
+                                            
+                                            ><span style={{backgroundColor:commandColor(visitor.command),color:"white",fontWeight:900, fontSize:"15px", padding:"10px",borderRadius:"8px"}}>{visitor.command === 1? "سماح" : visitor.command === 2 ? "إنتظار" : "رفض" }</span></td>
+                                            <td>
+                                                <button style={buttonStyle} onClick={()=>deleteVisitor(visitor.id)}>مسح الطلب</button>
+                                            </td>
+                                        </tr>
+                                    )    
+                                })}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
+
+                <VisitorsTable />
             </div>
-            <div className="card">
-                <div className="card-header" >
-                    <h3>أوامر الدخول</h3>
-                </div>
-                <div className="card-body">
-                    <table className="table table-striped table-hover">
-                        <thead>
-                            <tr>
-                                <th colSpan="2">إسم الزائر</th>
-                                <th colSpan="2">الأمر</th>
-                                <th colSpan="2">مسح طلب الدخول</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {error ? <tr>حدث خطأ في استرجاع البيانات</tr> : null}
-                            {visitorsCommand.map(visitor =>{
-                                return(
-                                    <tr key={visitor.id}>
-                                        <td colSpan="2">{visitor.name}</td>
-                                        <td colSpan="2"
-                                        
-                                        ><span style={{backgroundColor:commandColor(visitor.command),color:"white",fontWeight:900, fontSize:"15px", padding:"10px",borderRadius:"8px"}}>{visitor.command === 1? "سماح" : visitor.command === 2 ? "إنتظار" : "رفض" }</span></td>
-                                        <td>
-                                            <button style={buttonStyle} onClick={()=>deleteVisitor(visitor.id)}>مسح الطلب</button>
-                                        </td>
-                                    </tr>
-                                )    
-                            })}
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <VisitorsTable />
-        </div>
+        </>
     )
 }

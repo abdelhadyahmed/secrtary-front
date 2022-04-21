@@ -3,12 +3,12 @@ import './Nav.css'
 // import { NavLink} from 'react-router-dom'
 import primLogo from '../../images/primLogo.png'
 
-function Nav() {
+function Nav({title}) {
     return (
         <div className='navbar'>
             <div className='container'>
                 <div className='navContainer'>
-                    <p className='logo'>سكرتارية القائد</p>
+                    <p className='logo'>{title}</p>
                     <div className="img">
                         <img src={primLogo} alt='KonozmasrLogo'/>   
                     </div>
