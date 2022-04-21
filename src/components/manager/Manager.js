@@ -1,5 +1,5 @@
 import React, { useState, useEffect,useMemo } from 'react'
-import testAudio from '../../sound/test.wav'
+import testAudio from '../../sound/iphone-sms.mp3'
 // import useSound from 'use-sound';
 // import boopSfx from '../../sounds/boop.mp3';
 import axios from 'axios'
@@ -88,23 +88,32 @@ export default function Manager(){
                         <thead>
                             <tr>
                                 <th colSpan="2">إسم الزائر</th>
+                                <th>الوظيفة</th>
                                 <th>سبب الزيارة</th>
-                                <th>ملاحظات</th>
-                                <th colSpan="2">سماح / رفض </th>
+                                <th>وقت الزيارة</th>
+                                <th colSpan="2">سماح / رفض / انتظار</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {error ? <tr>content not relod</tr> : null}
+                            {error ? <tr>حدث خطأ في استرجاع البيانات</tr> : null}
                             {visitors.map(visitor =>{
+                                
                                 return(
                                     <tr key={visitor.id}>
                                         <td colSpan="2">{visitor.name}</td>
                                         <td>{visitor.reason}</td>
                                         <td>{visitor.notes}</td>
+                                        <td>{visitor.created_at}</td>
                                         <td colSpan="2">
-                                            <button onClick={()=>deleteVisitor(visitor,1)}>سماح</button>
-                                            <button onClick={()=>deleteVisitor(visitor, 0)}>رفض</button>
-                                            <button onClick={()=>deleteVisitor(visitor, 2)}>انتظار</button>
+                                            <button
+                                            style={{cursor:'pointer', border:"none",marginLeft:"15px",paddingRight:"20px",paddingLeft:"20px",backgroundColor:"green",color:"white",fontWeight:900, fontSize:"15px", padding:"10px",borderRadius:"8px"}}   
+                                            onClick={()=>deleteVisitor(visitor,1)}>سماح</button>
+                                            <button 
+                                            style={{cursor:'pointer',border:"none",marginLeft:"8px",backgroundColor:"red",paddingRight:"20px",paddingLeft:"20px",color:"white",fontWeight:900, fontSize:"15px", padding:"10px",borderRadius:"8px"}}
+                                            onClick={()=>deleteVisitor(visitor, 0)}>رفض</button>
+                                            <button 
+                                            style={{cursor:'pointer',border:"none",backgroundColor:"#F59006",color:"white",paddingRight:"20px",paddingLeft:"20px",fontWeight:900, fontSize:"15px", padding:"10px",borderRadius:"8px"}}
+                                            onClick={()=>deleteVisitor(visitor, 2)}>انتظار</button>
                                             {boolCommand === 2 + visitor.id ? <p>هذه الزيارة في حالة انتظار</p> : null}
                                         </td>
                                     </tr>

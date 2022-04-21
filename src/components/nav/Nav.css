@@ -6,13 +6,26 @@
 .navbar{
     height: auto;
     overflow: hidden;
-    background-color: #435d7d;
+    background-color: #CC8C29;
     color: #fff;
     margin-bottom: 15PX;
 }
+.navContainer{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+.navContainer .img{
+    width:200px;
+    /* height: 100px; */
+}
+.navContainer .img img{
+    width:100%;
+}
 
 .logo{
-    font-size: 25px;
+    font-size: 35px;
     width:60%;
     float:right;
     display:block;

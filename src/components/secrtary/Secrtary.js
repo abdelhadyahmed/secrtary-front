@@ -1,10 +1,11 @@
 import { useState, useEffect,useMemo } from 'react';
 import axios from 'axios';
-import testAudio from '../../sound/test.wav'
+import testAudio from '../../sound/iphone-sms.mp3'
 
 import useSWR from 'swr';
 import './Secrtary.css'
 import {IP} from '../../Config'
+import VisitorsTable from './VisitorsTable';
 
 let alertVisitors = []
 
@@ -21,7 +22,9 @@ export default function Secrtary(){
             setVisitorsCommand(data || [])
         }
      },[data])
-    const handleSubmit = (e)=>{
+
+
+     const handleSubmit = (e)=>{
         e.preventDefault();
         if (e.target.name.value === '' || e.target.reason.value ===''){
             return false
@@ -60,16 +63,35 @@ export default function Secrtary(){
         if(alertVisitors.length < visitorsCommand.length  ){
             // alert(visitors[visitors.length -1]?.name)
             // setPlayAudio(true)
+            // document.body.addEventListener("mousemove", function () {
+            //     audio.play()
+            // })
             audio.play()
         }
         alertVisitors = visitorsCommand
     },[visitorsCommand,audio])
 
+    const commandColor = (command)=>{
+        if(command === 1) return "green";
+        else if(command === 2) return "#F59006"
+        return "red"
+    }
+
+    const buttonStyle = {
+        color:"white",
+        backgroundColor:"#f5806a",
+        outline:"none",
+        border:"none",
+        padding:"10px",
+        borderRadius:"8px",
+        cursor:"pointer"
+    }
+
     return (
         <div className="container">
-            <div className="card">
+            <div className="card" style={{marginBottom:"20px"}}>
                 <div className="card-header" >
-                    <h3>  معلومات عن <b>الزائر</b></h3>
+                    <h3>معلومات عن الزائر</h3>
                 </div>
                 <div className="card-body">
                     <form onSubmit={handleSubmit}>
@@ -77,33 +99,33 @@ export default function Secrtary(){
                             <div className="col">
                             <div className="form-outline">
                                 <label className="form-label" htmlFor="form3Example1">إسم الزائر</label>
-                                <input  type="text" name="name" className="form-control" onChange={handleChange} value={state.name} />
+                                <input required type="text" name="name" className="form-control" onChange={handleChange} value={state.name} />
                             </div>
                             </div>
                             <div className="col">
                             <div className="form-outline">
-                                <label className="form-label" htmlFor="form3Example2">سبب الزيارة</label>
-                                <input type="text" name="reason"  className="form-control"  onChange={handleChange} value={state.reason} />
+                                <label className="form-label" htmlFor="form3Example2">الوظيفة</label>
+                                <input required type="text" name="reason"  className="form-control"  onChange={handleChange} value={state.reason} />
                             </div>
                             </div>
                         </div>
 
 
                         <div className="form-outline mb-4">
-                            <label className="form-label" htmlFor="form3Example3">ملاحظات</label>
+                            <label className="form-label" htmlFor="form3Example3">سبب الزيارة</label>
                             <input type="text" name="notes"  className="form-control"  onChange={handleChange} value={state.notes} />
                         </div>
 
 
-                        <div className="card-footer text-center">
-                            <button type="submit" className="btn btn-primary mb-4" >إرسال إلى القائد</button>
+                        <div className="text-center">
+                            <button type="submit" className="btn mb-4 btncolor" >إرسال إلى القائد</button>
                         </div>
                     </form>
                 </div>
             </div>
             <div className="card">
                 <div className="card-header" >
-                    <h1>أوامر الدخول</h1>
+                    <h3>أوامر الدخول</h3>
                 </div>
                 <div className="card-body">
                     <table className="table table-striped table-hover">
@@ -115,14 +137,16 @@ export default function Secrtary(){
                             </tr>
                         </thead>
                         <tbody>
-                            {error ? <tr>content not relod</tr> : null}
+                        {error ? <tr>حدث خطأ في استرجاع البيانات</tr> : null}
                             {visitorsCommand.map(visitor =>{
                                 return(
                                     <tr key={visitor.id}>
                                         <td colSpan="2">{visitor.name}</td>
-                                        <td colSpan="2">{visitor.command === 1? "سماح" : visitor.command === 2 ? "إنتظار" : "رفض" }</td>
+                                        <td colSpan="2"
+                                        
+                                        ><span style={{backgroundColor:commandColor(visitor.command),color:"white",fontWeight:900, fontSize:"15px", padding:"10px",borderRadius:"8px"}}>{visitor.command === 1? "سماح" : visitor.command === 2 ? "إنتظار" : "رفض" }</span></td>
                                         <td>
-                                            <button onClick={()=>deleteVisitor(visitor.id)}>مسح الطلب</button>
+                                            <button style={buttonStyle} onClick={()=>deleteVisitor(visitor.id)}>مسح الطلب</button>
                                         </td>
                                     </tr>
                                 )    
@@ -131,6 +155,8 @@ export default function Secrtary(){
                     </table>
                 </div>
             </div>
+
+            <VisitorsTable />
         </div>
     )
 }
